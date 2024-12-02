@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"slices"
 	"strconv"
 	"strings"
 
@@ -27,9 +26,19 @@ func run(part2 bool, input string) any {
 	if part2 {
 		return "not implemented"
 	}
-	// solve part 1 here
 
-	file, err := os.Open("input-user.txt")
+	path := "input-user.txt"
+	lists := getInput(path)
+
+	// 1. hashmap for each list showing instances of each integer
+	// 2. find x * n for each unique int, comparing left to right
+	//     - values missing from right list are to be ignored
+
+	return len(lists)
+}
+
+func getInput(path string) [][]int {
+	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,29 +66,6 @@ func run(part2 bool, input string) any {
 		left = append(left, val1)
 		right = append(right, val2)
 
-		slices.Sort(left)
-		slices.Sort(right)
 	}
-
-	var diffs []int
-	for i := range left {
-		diffs = append(diffs, diff(left[i], right[i]))
-	}
-
-	return sumSlice(diffs)
-}
-
-func diff(a, b int) int {
-	if a < b {
-		return b - a
-	}
-	return a - b
-}
-
-func sumSlice(nums []int) int {
-	total := 0
-	for _, num := range nums {
-		total += num
-	}
-	return total
+	return [][]int{left, right}
 }
