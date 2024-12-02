@@ -23,13 +23,39 @@ func main() {
 // 4. with: true (part2), and user input
 // the return value of each run is printed to stdout
 func run(part2 bool, input string) any {
-	// when you're ready to do part 2, remove this "not implemented" block
-	if part2 {
-		return "not implemented"
-	}
-	// solve part 1 here
+	path := "input-user.txt"
+	left, right := getInput(path)
 
-	file, err := os.Open("input-user.txt")
+	if part2 {
+		m := make(map[int]int)
+
+		for _, num := range right {
+			m[num] = m[num] + 1
+		}
+
+		var sims []int
+		for _, num := range left {
+			if m[num] != 0 {
+				sims = append(sims, num*m[num])
+			}
+		}
+
+		return sumSlice(sims)
+	}
+
+	slices.Sort(left)
+	slices.Sort(right)
+
+	var diffs []int
+	for i := range left {
+		diffs = append(diffs, diff(left[i], right[i]))
+	}
+
+	return sumSlice(diffs)
+}
+
+func getInput(path string) ([]int, []int) {
+	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,16 +83,8 @@ func run(part2 bool, input string) any {
 		left = append(left, val1)
 		right = append(right, val2)
 
-		slices.Sort(left)
-		slices.Sort(right)
 	}
-
-	var diffs []int
-	for i := range left {
-		diffs = append(diffs, diff(left[i], right[i]))
-	}
-
-	return sumSlice(diffs)
+	return left, right
 }
 
 func diff(a, b int) int {

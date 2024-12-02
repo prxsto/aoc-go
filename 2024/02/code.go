@@ -27,45 +27,5 @@ func run(part2 bool, input string) any {
 		return "not implemented"
 	}
 
-	path := "input-user.txt"
-	lists := getInput(path)
-
-	// 1. hashmap for each list showing instances of each integer
-	// 2. find x * n for each unique int, comparing left to right
-	//     - values missing from right list are to be ignored
-
-	return len(lists)
-}
-
-func getInput(path string) [][]int {
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	var left []int
-	var right []int
-
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		vals := strings.Fields(line)
-
-		val1, err := strconv.Atoi(vals[0])
-		if err != nil {
-			fmt.Println("error converting string: ", err)
-		}
-
-		val2, err := strconv.Atoi(vals[1])
-		if err != nil {
-			fmt.Println("error converting string: ", err)
-		}
-
-		left = append(left, val1)
-		right = append(right, val2)
-
-	}
-	return [][]int{left, right}
+	return 42
 }
