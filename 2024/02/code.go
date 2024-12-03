@@ -28,11 +28,11 @@ func run(part2 bool, input string) any {
 	}
 
 	path := "input-user.txt"
-	data := getInput(path)
+	reports := getInput(path)
 
-	fmt.Println(data)
+	valid := checkReports(reports)
 
-	return 42
+	return valid
 }
 
 func getInput(path string) [][]int {
@@ -42,7 +42,7 @@ func getInput(path string) [][]int {
 	}
 	defer file.Close()
 
-	var data [][]int
+	var reports [][]int
 
 	scanner := bufio.NewScanner(file)
 
@@ -59,8 +59,57 @@ func getInput(path string) [][]int {
 			report = append(report, val)
 		}
 
-		data = append(data, report)
+		reports = append(reports, report)
 
 	}
-	return data
+	return reports
+}
+
+func checkReports(reports [][]int) int {
+	fmt.Println("valid reports: ")
+	var valid int
+	for _, report := range reports {
+		if len(report) < 2 {
+			continue
+		}
+
+		var ascending bool
+		ordered := true
+		initialDiff := report[1] - report[0]
+		switch {
+		case initialDiff == 0:
+			continue
+		case 1 <= initialDiff && initialDiff <= 3:
+			ascending = true
+		case -3 <= initialDiff && initialDiff <= -1:
+			ascending = false
+		}
+		prev := report[1]
+		for _, curr := range report[2:] { // begin comparison at index 2
+			diff := curr - prev
+			if diff == 0 {
+				ordered = false
+				break
+			} else if 1 <= diff && diff <= 3 {
+				if ascending {
+					continue
+				} else {
+					ordered = false
+					break
+				}
+			} else if -3 <= diff && diff <= -1 {
+				if !ascending {
+					continue
+				} else {
+					ordered = false
+					break
+				}
+			}
+		}
+		if ordered {
+			fmt.Println(report)
+			valid++
+		}
+	}
+	return valid
 }
