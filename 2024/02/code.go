@@ -22,15 +22,15 @@ func main() {
 // 4. with: true (part2), and user input
 // the return value of each run is printed to stdout
 func run(part2 bool, input string) any {
-	// when you're ready to do part 2, remove this "not implemented" block
-	if part2 {
-		return "not implemented"
-	}
-
 	path := "input-user.txt"
 	reports := getInput(path)
 
-	valid := checkReports(reports)
+	if part2 {
+		valid := checkReports(reports, true)
+		return valid
+	}
+
+	valid := checkReports(reports, false)
 
 	return valid
 }
@@ -65,7 +65,7 @@ func getInput(path string) [][]int {
 	return reports
 }
 
-func checkReports(reports [][]int) int {
+func checkReports(reports [][]int, dampener bool) int {
 	fmt.Println("valid reports: ")
 	var valid int
 	for _, report := range reports {
@@ -73,13 +73,17 @@ func checkReports(reports [][]int) int {
 			continue
 		}
 
+		var bad int
+		if !dampener {
+			bad = 1
+		}
+
 		var ascending bool
-		ordered := true
 		initialDiff := report[1] - report[0]
 
 		switch {
 		case initialDiff == 0:
-			continue
+			bad++
 		case 1 <= initialDiff && initialDiff <= 3:
 			ascending = true
 		case -3 <= initialDiff && initialDiff <= -1:
@@ -92,24 +96,22 @@ func checkReports(reports [][]int) int {
 			diff := report[i+1] - report[i]
 
 			if diff == 0 {
-				ordered = false
-				break
+				bad++
 			}
 
 			if ascending && (diff < 1 || diff > 3) {
-				ordered = false
-				break
+				bad++
 			}
 
 			if !ascending && (diff > -1 || diff < -3) {
-				ordered = false
+				bad++
+			}
+
+			if bad > 1 {
 				break
 			}
 		}
-
-		if ordered {
-			valid++
-		}
+		valid++
 	}
 	return valid
 }
