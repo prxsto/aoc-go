@@ -76,6 +76,7 @@ func checkReports(reports [][]int) int {
 		var ascending bool
 		ordered := true
 		initialDiff := report[1] - report[0]
+
 		switch {
 		case initialDiff == 0:
 			continue
@@ -83,31 +84,30 @@ func checkReports(reports [][]int) int {
 			ascending = true
 		case -3 <= initialDiff && initialDiff <= -1:
 			ascending = false
+		default:
+			continue
 		}
-		prev := report[1]
-		for _, curr := range report[2:] { // begin comparison at index 2
-			diff := curr - prev
+
+		for i := 1; i < len(report)-1; i++ {
+			diff := report[i+1] - report[i]
+
 			if diff == 0 {
 				ordered = false
 				break
-			} else if 1 <= diff && diff <= 3 {
-				if ascending {
-					continue
-				} else {
-					ordered = false
-					break
-				}
-			} else if -3 <= diff && diff <= -1 {
-				if !ascending {
-					continue
-				} else {
-					ordered = false
-					break
-				}
+			}
+
+			if ascending && (diff < 1 || diff > 3) {
+				ordered = false
+				break
+			}
+
+			if !ascending && (diff > -1 || diff < -3) {
+				ordered = false
+				break
 			}
 		}
+
 		if ordered {
-			fmt.Println(report)
 			valid++
 		}
 	}
